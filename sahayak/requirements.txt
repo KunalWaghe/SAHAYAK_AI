@@ -1,0 +1,75 @@
+# ─────────────────────────────────────────────
+#  SAHAYAK — AI Government Scheme Finder
+#  requirements.txt
+# ─────────────────────────────────────────────
+#  Install all:  pip install -r requirements.txt
+# ─────────────────────────────────────────────
+
+# ── Web Scraping ──────────────────────────────
+requests==2.31.0
+beautifulsoup4==4.12.3
+lxml==5.2.1
+selenium==4.21.0               # only if JS-rendered pages needed
+
+# ── Data Handling ────────────────────────────
+pandas==2.2.2
+numpy==1.26.4
+tqdm==4.66.4                   # progress bars
+
+# ── NLP & Embeddings ─────────────────────────
+transformers==4.41.2           # HuggingFace — MuRIL, IndicBERT
+torch==2.3.0                   # PyTorch backend
+sentence-transformers==3.0.1   # easy embedding wrapper
+tokenizers==0.19.1
+
+# ── Vector Search ────────────────────────────
+faiss-cpu==1.8.0               # use faiss-gpu if CUDA available
+
+# ── Translation — IndicTrans2 ────────────────
+# IndicTrans2 is installed separately from source:
+# git clone https://github.com/AI4Bharat/IndicTrans2
+# cd IndicTrans2 && pip install -e .
+# Also needs:
+sacremoses==0.1.1
+sentencepiece==0.2.0
+mosestokenizer==1.2.1
+indic-nlp-library==0.92
+
+# ── Speech-to-Text — Whisper ─────────────────
+openai-whisper==20231117
+ffmpeg-python==0.2.0           # ffmpeg must also be installed on OS:
+                               #   Ubuntu:  sudo apt install ffmpeg
+                               #   Mac:     brew install ffmpeg
+                               #   Windows: choco install ffmpeg
+
+# ── Text-to-Speech ───────────────────────────
+gTTS==2.5.1                    # Google TTS (needs internet)
+# pyttsx3==2.90                # offline fallback (optional)
+
+# ── LLM — Local Open Source ──────────────────
+# Option A: Use via HuggingFace (Gemma 2 / Mistral)
+accelerate==0.30.1
+bitsandbytes==0.43.1           # 4-bit quantization (reduces RAM needs)
+scipy==1.13.1
+
+# Option B: Use Ollama (easiest local LLM setup)
+# Install Ollama separately: https://ollama.com
+# Then run: ollama pull gemma2
+# Then pip install:
+ollama==0.2.1
+
+# ── Streamlit App ────────────────────────────
+streamlit==1.35.0
+streamlit-chat==0.1.1          # chat UI component
+audio-recorder-streamlit==0.0.8  # mic input in browser
+
+# ── Utilities ────────────────────────────────
+python-dotenv==1.0.1           # .env file for secrets/config
+pydantic==2.7.1                # data validation
+loguru==0.7.2                  # clean logging
+joblib==1.4.2                  # caching heavy model loads
+
+# ── Notebook / Dev Tools ─────────────────────
+jupyter==1.0.0
+ipykernel==6.29.4
+ipywidgets==8.1.3
