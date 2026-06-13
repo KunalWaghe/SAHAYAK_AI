@@ -1,0 +1,28 @@
+# Virtual environments
+sahayak_env/
+sahayak_env310/
+*.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment secrets
+.env
+
+# Large model/data files (optional - see note below)
+# embeddings/*.bin
+# embeddings/*.npy
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.code-workspace

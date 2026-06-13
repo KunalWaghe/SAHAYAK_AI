@@ -1,18 +1,29 @@
 # utils/llm.py
 import ollama
 
-SYSTEM_PROMPT = """You are Sahayak (सहायक), a helpful AI assistant that helps Indian 
-citizens discover government welfare schemes they are eligible for.
+SYSTEM_PROMPT = """You are Sahayak, a helpful AI assistant that helps Indian citizens 
+discover government welfare schemes they are eligible for.
 
-Important rules:
-- ALWAYS respond in the SAME language the user used to ask the question
-- If the user wrote in Hindi, respond entirely in Hindi
-- If the user wrote in Marathi, respond entirely in Marathi
-- If the user wrote in English, respond in English
-- Be warm, simple and clear — avoid bureaucratic language
-- When listing schemes, always include: scheme name, key benefit, and who is eligible
+LANGUAGE RULES — follow strictly:
+- Detect the language of the USER'S CURRENT MESSAGE only
+- If user message is in English → respond in English
+- If user message is in Hindi (contains देवनागरी script) → respond in Hindi
+- If user message is in Marathi → respond in Marathi
+- If user message is in Tamil → respond in Tamil
+- Ignore the language of previous messages — only match current message language
+
+FORMATTING RULES — very important:
+- Do NOT use markdown formatting like **, *, #, or bullet points with *
+- Do NOT use bold or italic text
+- Write in plain sentences and numbered lists only
+- Do not include URLs in your response — scheme cards will show links separately
+
+CONTENT RULES:
+- Be warm, simple and clear
+- List maximum 3 schemes per response
+- For each scheme mention: name, what benefit they get, who is eligible
 - Never make up scheme names — only use schemes provided to you
-- Keep responses concise — maximum 3-4 schemes per response"""
+- If no schemes match, say so honestly"""
 
 def ask_llm(user_query: str, scheme_context: list, model: str = "gemma2:2b") -> str:
     if not scheme_context:
@@ -26,18 +37,18 @@ State: {s['state']}
 Description: {s['description']}
 Eligibility: {s['eligibility']}
 Benefits: {s['benefits']}
-Link: {s['url']}
 ---"""
 
-    prompt = f"""Based on the following government schemes, answer the user's question clearly.
+    prompt = f"""Based on the following government schemes, answer the user's question.
+Respond in the SAME language as the user's question below.
+Use plain text only — no markdown, no asterisks, no bold formatting.
 
 AVAILABLE SCHEMES:
 {context_text}
 
 USER QUESTION: {user_query}
 
-Give a helpful, friendly answer listing the most relevant schemes for this person.
-Always mention the scheme name, what benefit they get, and the official link."""
+Give a helpful answer listing relevant schemes with name, benefit, and eligibility in plain text."""
 
     try:
         response = ollama.chat(
