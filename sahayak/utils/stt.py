@@ -1,24 +1,25 @@
 # utils/stt.py
+import streamlit as st
 import whisper
 import tempfile
 import os
 
-_model = None
-
-def _load():
-    global _model
-    if _model is None:
-        print("⏳ Loading Whisper model...")
-        _model = whisper.load_model("base")
-        print("✅ Whisper ready")
+@st.cache_resource
+def _load_whisper():
+    print("⏳ Loading Whisper model...")
+    model = whisper.load_model("small")
+    print("✅ Whisper ready")
+    return model
 
 def transcribe_audio(audio_bytes: bytes) -> dict:
-    _load()
+    model = _load_whisper()
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
         f.write(audio_bytes)
         tmp_path = f.name
     try:
-        result = _model.transcribe(tmp_path)
+        # task="transcribe" ensures output stays in the SAME language as spoken
+        # language=None lets Whisper auto-detect the spoken language
+        result = model.transcribe(tmp_path, task="transcribe", language=None)
         return {
             "text":     result["text"].strip(),
             "language": result.get("language", "unknown")

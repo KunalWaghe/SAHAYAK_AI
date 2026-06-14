@@ -201,8 +201,8 @@ if prefill and not user_input:
     user_input = prefill
 
 # ─── Process Input ────────────────────────────
+# ─── Process Input ────────────────────────────
 if user_input:
-    # Save user message to history
     st.session_state.messages.append({
         "role":    "user",
         "content": user_input,
@@ -210,17 +210,32 @@ if user_input:
         "audio":   None
     })
 
-    # Generate everything before rendering
-    with st.spinner("🔍 Searching 4,718 schemes..."):
-        schemes = search_schemes(user_input, top_k=5)
-
-    with st.spinner("🤖 Generating answer in your language..."):
-        final_response = ask_llm(user_input, schemes)
-
-    with st.spinner("🔊 Generating voice response..."):
+    if is_greeting(user_input):
+        # Skip search entirely for greetings
+        GREETING_RESPONSES = {
+            "hi": "नमस्ते! आप मुझसे किसी भी सरकारी योजना के बारे में पूछ सकते हैं। जैसे: 'किसानों के लिए योजना' या 'महिलाओं के लिए पेंशन योजना'।",
+            "mr": "नमस्कार! तुम्ही मला कोणत्याही सरकारी योजनेबद्दल विचारू शकता.",
+            "ta": "வணக்கம்! எந்த அரசு திட்டத்தைப் பற்றியும் என்னிடம் கேளுங்கள்.",
+            "te": "నమస్కారం! ఏదైనా ప్రభుత్వ పథకం గురించి నన్ను అడగండి.",
+            "bn": "নমস্কার! যেকোনো সরকারি প্রকল্প সম্পর্কে আমাকে জিজ্ঞাসা করুন।",
+            "en": "Hello! Ask me about any government scheme — try something specific like 'farmer schemes in Maharashtra' or 'pension for elderly women'.",
+        }
+        final_response = GREETING_RESPONSES.get(user_lang, GREETING_RESPONSES["en"])
+        schemes = []
         audio_bytes = text_to_speech(final_response, user_lang)
+    else:
+        # Normal search + LLM pipeline
+        with st.spinner("🔍 Searching 4,718 schemes..."):
+            raw_schemes = search_schemes(user_input, top_k=5)
+            # Filter out low-relevance results
+            schemes = [s for s in raw_schemes if s.get("score", 0) >= 0.5]
 
-    # Save assistant message to history
+        with st.spinner("🤖 Generating answer..."):
+            final_response = ask_llm(user_input, schemes)
+
+        with st.spinner("🔊 Generating voice..."):
+            audio_bytes = text_to_speech(final_response, user_lang)
+
     st.session_state.messages.append({
         "role":    "assistant",
         "content": final_response,
@@ -228,7 +243,6 @@ if user_input:
         "audio":   audio_bytes if audio_bytes else None
     })
 
-    # Rerun to render everything cleanly from history
     st.rerun()
 
 SIDEBAR_LABELS = {
