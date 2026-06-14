@@ -6,6 +6,16 @@ from utils.tts import text_to_speech
 from audio_recorder_streamlit import audio_recorder
 from utils.stt import transcribe_audio
 
+# ─── Greeting Detection ────────────────────────
+GREETING_WORDS = [
+    "hello", "hi", "hey", "namaste", "नमस्ते", "नमस्कार", 
+    "thanks", "thank you", "धन्यवाद", "bye", "ok", "okay"
+]
+
+def is_greeting(text: str) -> bool:
+    cleaned = text.lower().strip().strip("!.,?")
+    return cleaned in GREETING_WORDS or len(cleaned.split()) <= 2 and any(g in cleaned for g in GREETING_WORDS)
+
 # ─── Page Config ──────────────────────────────
 st.set_page_config(
     page_title="Sahayak — सहायक",
