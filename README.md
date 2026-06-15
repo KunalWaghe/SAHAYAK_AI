@@ -1,7 +1,3 @@
-To make your repository stand out for hackathon judges and recruiters, you need a README that balances technical depth with a clear value proposition.
-
-You can copy and paste the markdown below directly into a `README.md` file in your GitHub repository.
-
 ---
 
 # 🇮🇳 Sahayak (सहायक)
