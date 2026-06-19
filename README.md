@@ -72,7 +72,7 @@ Sahayak transforms the discovery process through:
 
 1. **Clone the repo:**
 ```bash
-git clone https://github.com/yourusername/sahayak-ai.git
+git clone https://github.com/KunalWaghe/sahayak-ai.git
 
 ```
 
